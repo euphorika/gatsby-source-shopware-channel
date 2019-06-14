@@ -1,3 +1,5 @@
+require('dotenv').config()
+
 module.exports = {
   siteMetadata: {
     title: `Gatsby Default Starter`,
@@ -29,8 +31,8 @@ module.exports = {
     },{
       resolve: "gatsby-source-shopware",
       options: {
-        accessKey: "SWIAQKZVS1RWBKJLUXJRDW0WBA",
-        accessSecret: "bmxlYUxtcHg4QzNkSzdpdTdYM0JlVFBvSnlya0t0ZXNGd3BiN2c",
+        apiUrl: 'http://localhost:8000',
+        accessKey: process.env.SHOPWARE_ACCESS_KEY,
       }
     },
     // this (optional) plugin enables Progressive Web App + Offline functionality

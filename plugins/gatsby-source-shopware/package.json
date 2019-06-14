@@ -8,5 +8,8 @@
   },
   "keywords": [],
   "author": "Jan Winterfeld <jan@euphorika.hamburg> (www.markenbegeisterung.de)",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "node-fetch": "^2.6.0"
+  }
 }
