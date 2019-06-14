@@ -10,6 +10,7 @@ exports.sourceNodes = (
   }
 
   const productApiEndpoint = `${configOptions.host}/sales-channel-api/v1/product`
+  const categoryApiEndpoint = `${configOptions.host}/sales-channel-api/v1/category`
 
   const processData = (data, type) => {
     const nodeId = createNodeId(`shopware-product-${data.id}`)
@@ -37,9 +38,12 @@ exports.sourceNodes = (
 
   return Promise.all([
     apiCall(productApiEndpoint, configOptions.accessKey),
+    apiCall(categoryApiEndpoint, configOptions.accessKey),
   ]).then(responses => {
     product = responses[0]
+    category = responses[1]
 
     makeNode(product.data, "Product")
+    makeNode(category.data, "Category")
   })
 }
