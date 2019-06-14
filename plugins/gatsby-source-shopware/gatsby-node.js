@@ -1,4 +1,4 @@
-const fetch = require("node-fetch")
+const apiCall = require("./fetch")
 
 exports.sourceNodes = (
   { actions, createNodeId, createContentDigest },
@@ -9,30 +9,37 @@ exports.sourceNodes = (
     "sw-access-key": configOptions.accessKey,
   }
 
-  const apiUrl = `${configOptions.apiUrl}/sales-channel-api/v1/product`
+  const productApiEndpoint = `${configOptions.host}/sales-channel-api/v1/product`
 
-  const processProduct = product => {
-    const nodeId = createNodeId(`shopware-product-${product.id}`)
-    const nodeContent = JSON.stringify(product)
-    const nodeData = Object.assign({}, product, {
+  const processData = (data, type) => {
+    const nodeId = createNodeId(`shopware-product-${data.id}`)
+    const nodeContent = JSON.stringify(data)
+    const nodeData = Object.assign({}, data, {
       id: nodeId,
       parent: null,
       children: [],
       internal: {
-        type: `ShopwareProduct`,
+        type: `Shopware${type}`,
         content: nodeContent,
-        contentDigest: createContentDigest(product),
+        contentDigest: createContentDigest(data),
       },
     })
+
     return nodeData
   }
 
-  return fetch(apiUrl, { headers: headers })
-    .then(response => response.json())
-    .then(products => {
-      products.data.forEach(product => {
-        const nodeData = processProduct(product)
-        createNode(nodeData)
-      })
+  const makeNode = (nodeData, type) => {
+    nodeData.forEach(datum => {
+      const nodeData = processData(datum, type)
+      createNode(nodeData)
     })
+  }
+
+  return Promise.all([
+    apiCall(productApiEndpoint, configOptions.accessKey),
+  ]).then(responses => {
+    product = responses[0]
+
+    makeNode(product.data, "Product")
+  })
 }
