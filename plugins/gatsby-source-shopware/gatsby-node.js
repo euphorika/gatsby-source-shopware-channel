@@ -8,29 +8,33 @@ exports.sourceNodes = (
   const headers = {
     "sw-access-key": configOptions.accessKey,
   }
+  const LIMIT = 500
 
-  const productApiEndpoint = `${configOptions.host}/sales-channel-api/v1/product`
-  const categoryApiEndpoint = `${configOptions.host}/sales-channel-api/v1/category`
+  const productApiEndpoint = `${configOptions.host}/sales-channel-api/v1/product?limit=${LIMIT}`
+  const categoryApiEndpoint = `${configOptions.host}/sales-channel-api/v1/category?limit=${LIMIT}`
 
   const processData = (data, type) => {
-    const nodeId = createNodeId(`shopware-product-${data.id}`)
-    const nodeContent = JSON.stringify(data)
-    const nodeData = Object.assign({}, data, {
+    const dataWithItemId = { ...data, itemId: data.id } // preserve ID field
+    const nodeId = createNodeId(`shopware-${type.toLowerCase()}-${data.id}`)
+    const nodeContent = JSON.stringify(dataWithItemId)
+    const nodeData = Object.assign({}, dataWithItemId, {
       id: nodeId,
       parent: null,
       children: [],
       internal: {
         type: `Shopware${type}`,
         content: nodeContent,
-        contentDigest: createContentDigest(data),
+        contentDigest: createContentDigest(dataWithItemId),
       },
     })
 
     return nodeData
   }
 
-  const makeNode = (nodeData, type) => {
+  const makeNode = (nodeData, type, callback = datum => datum) => {
     nodeData.forEach(datum => {
+      datum = callback(datum)
+
       const nodeData = processData(datum, type)
       createNode(nodeData)
     })
@@ -40,10 +44,33 @@ exports.sourceNodes = (
     apiCall(productApiEndpoint, configOptions.accessKey),
     apiCall(categoryApiEndpoint, configOptions.accessKey),
   ]).then(responses => {
-    product = responses[0]
-    category = responses[1]
+    const product = responses[0]
+    const category = responses[1]
 
-    makeNode(product.data, "Product")
-    makeNode(category.data, "Category")
+    let productsToCategory = {}
+
+    makeNode(product.data, "Product", product => {
+      if (product.categoryTree) {
+        product.categoryTree.forEach(categoryId => {
+          if (!productsToCategory[categoryId]) {
+            productsToCategory[categoryId] = []
+          }
+
+          productsToCategory[categoryId].push(product)
+        })
+      }
+
+      return product
+    })
+
+    makeNode(category.data, "Category", category => {
+      const products = productsToCategory[category.id]
+
+      if (products) {
+        category.products = products
+      }
+
+      return category
+    })
   })
 }
