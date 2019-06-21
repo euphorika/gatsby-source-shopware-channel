@@ -7,7 +7,11 @@
     "format": "prettier --write src/**/*.{js,jsx}",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": ["gatsby", "shopware 6", "sales channel"],
+  "keywords": [
+    "gatsby",
+    "shopware 6",
+    "sales channel"
+  ],
   "author": "Jan Winterfeld <jan@euphorika.hamburg> (www.markenbegeisterung.de)",
   "license": "MIT",
   "dependencies": {
@@ -15,5 +19,12 @@
   },
   "devDependencies": {
     "prettier": "1.18.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/euphorika/gatsby-source-shopware-channel.git"
+  },
+  "bugs": {
+    "url": "https://github.com/euphorika/gatsby-source-shopware-channel/issues"
   }
 }
