@@ -30,7 +30,7 @@ plugins: [
   {
     resolve: `gatsby-source-shopware-channel`,
     options: {
-      apiUrl: 'http://localhost:8000',
+      host: 'http://localhost:8000',
       accessKey: process.env.SHOPWARE_ACCESS_KEY,
     },
   },
@@ -38,9 +38,9 @@ plugins: [
 ```
 ## Plugin Options
 
-### apiUrl (required)
+### host (required)
 
-Your API Endpoint where you Shopware 6 installation lives.
+Your API Endpoint where your Shopware 6 installation lives.
 
 ### accessKey (required)
 

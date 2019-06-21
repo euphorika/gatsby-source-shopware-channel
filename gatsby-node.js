@@ -1,4 +1,4 @@
-const apiCall = require("./fetch")
+const apiCall = require("./src/fetch")
 
 exports.sourceNodes = (
   { actions, createNodeId, createContentDigest },
