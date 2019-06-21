@@ -13,7 +13,8 @@ exports.sourceNodes = (
   const productApiEndpoint = `${configOptions.host}/sales-channel-api/v1/product?limit=${LIMIT}`
   const categoryApiEndpoint = `${configOptions.host}/sales-channel-api/v1/category?sort=level&limit=${LIMIT}`
 
-  const concatNodeId = (id, type) => createNodeId(`shopware-${type.toLowerCase()}-${id}`)
+  const concatNodeId = (id, type) =>
+    createNodeId(`shopware-${type.toLowerCase()}-${id}`)
 
   const processData = (data, type) => {
     const dataWithItemId = { ...data, itemId: data.id } // preserve ID field
